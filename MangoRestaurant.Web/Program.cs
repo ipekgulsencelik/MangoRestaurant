@@ -1,6 +1,7 @@
 using MangoRestaurant.WebUI.Services.Abstract;
 using MangoRestaurant.WebUI.Services.Concrete;
 using MangoRestaurant.WebUI;
+using Microsoft.Extensions.Configuration;
 
 namespace MangoRestaurant.Web
 {
@@ -11,7 +12,9 @@ namespace MangoRestaurant.Web
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddHttpClient<IProductService, ProductService>();
-            SD.ProductAPIBase = ConfigurationPath["ServiceUrls:ProductAPI"];
+
+            SD.ProductAPIBase = builder.Configuration.GetConnectionString("ProductAPI");
+            //SD.ProductAPIBase = builder.Configuration.GetValue(["ServiceUrls:ProductAPI"]);
 
             builder.Services.AddScoped<IProductService, ProductService>();
 
