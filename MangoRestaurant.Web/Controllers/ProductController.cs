@@ -27,5 +27,27 @@ namespace MangoRestaurant.WebUI.Controllers
             
             return View(list);
         }
+
+        public async Task<IActionResult> CreateProduct()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateProduct(ProductDTO model)
+        {
+            if (ModelState.IsValid)
+            {
+                var accessToken = await HttpContext.GetTokenAsync("access_token");
+                var response = await _productService.CreateProductAsync<ResponseDTO>(model, accessToken);
+                if (response != null && response.IsSuccess)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+
+            return View(model);
+        }
     }
 }
