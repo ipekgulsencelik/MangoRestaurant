@@ -56,9 +56,9 @@ namespace MangoRestaurant.WebUI.Services.Concrete
                 apiResponse = await client.SendAsync(message);
 
                 var apiContent = await apiResponse.Content.ReadAsStringAsync();
-                var apiResponseDto = JsonConvert.DeserializeObject<T>(apiContent);
-                return apiResponseDto;
+                var apiResponseDTO = JsonConvert.DeserializeObject<T>(apiContent);
 
+                return apiResponseDTO;
             }
             catch (Exception e)
             {
@@ -69,8 +69,9 @@ namespace MangoRestaurant.WebUI.Services.Concrete
                     IsSuccess = false
                 };
                 var res = JsonConvert.SerializeObject(dto);
-                var apiResponseDto = JsonConvert.DeserializeObject<T>(res);
-                return apiResponseDto;
+                var apiResponseDTO = JsonConvert.DeserializeObject<T>(res);
+                
+                return apiResponseDTO;
             }
         }
 
