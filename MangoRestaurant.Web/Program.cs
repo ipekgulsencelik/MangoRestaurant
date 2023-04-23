@@ -1,3 +1,7 @@
+using MangoRestaurant.WebUI.Services.Abstract;
+using MangoRestaurant.WebUI.Services.Concrete;
+using MangoRestaurant.WebUI;
+
 namespace MangoRestaurant.Web
 {
     public class Program
@@ -5,6 +9,11 @@ namespace MangoRestaurant.Web
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddHttpClient<IProductService, ProductService>();
+            SD.ProductAPIBase = ConfigurationPath["ServiceUrls:ProductAPI"];
+
+            builder.Services.AddScoped<IProductService, ProductService>();
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
