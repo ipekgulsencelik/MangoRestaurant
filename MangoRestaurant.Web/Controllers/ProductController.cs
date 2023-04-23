@@ -1,8 +1,10 @@
 ﻿using MangoRestaurant.WebUI.Models;
 using MangoRestaurant.WebUI.Services.Abstract;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Data;
 
 namespace MangoRestaurant.WebUI.Controllers
 {
@@ -73,6 +75,39 @@ namespace MangoRestaurant.WebUI.Controllers
                 var accessToken = await HttpContext.GetTokenAsync("access_token");
                 var response = await _productService.UpdateProductAsync<ResponseDTO>(model, accessToken);
                 if (response != null && response.IsSuccess)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+
+            return View(model);
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteProduct(int productID)
+        {
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
+            var response = await _productService.GetProductByIDAsync<ResponseDTO>(productID, accessToken);
+            if (response != null && response.IsSuccess)
+            {
+                ProductDTO model = JsonConvert.DeserializeObject<ProductDTO>(Convert.ToString(response.Result));
+
+                return View(model);
+            }
+
+            return NotFound();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteProduct(ProductDTO model)
+        {
+            if (ModelState.IsValid)
+            {
+                var accessToken = await HttpContext.GetTokenAsync("access_token");
+                var response = await _productService.DeleteProductAsync<ResponseDTO>(model.ProductID, accessToken);
+                if (response.IsSuccess)
                 {
                     return RedirectToAction(nameof(Index));
                 }
